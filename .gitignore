@@ -1,0 +1,8 @@
+.vagrant/
+*.vdi
+*.vmdk
+*.vbox
+*.vbox-prev
+*.log
+*.bak
+*~

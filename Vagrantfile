@@ -52,6 +52,9 @@ Vagrant.configure("2") do |config|
       echo "PG_ADMIN_PASSWORD=#{pg_admin_password}" >> .env
       echo "PG_ADMIN_PORT=#{pg_admin_port}" >> .env
       docker compose -p inkoms-postgresql up -d || true
+      echo "-------------------------------------------------------------------------------"
+      echo "Happy coding !! Access http://localhost:#{pg_admin_port}" from your browser
+      echo "-------------------------------------------------------------------------------"
     SHELL
   end
 end

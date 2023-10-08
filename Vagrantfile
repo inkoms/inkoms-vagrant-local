@@ -1,11 +1,29 @@
+if File.exists?('.env')
+  File.foreach('.env') do |line|
+    if line =~ /^(.+)=(.+)$/
+      ENV[$1] = $2.strip
+    end
+  end
+end
+
 Vagrant.configure("2") do |config|
+
+  db_user = ENV['DB_USER']
+  db_password = ENV['DB_PASSWORD']
+  db_name = ENV['DB_NAME']
+  db_port = ENV['DB_PORT']
+  tz = ENV['TZ']
+  pg_admin_email = ENV['PG_ADMIN_EMAIL']
+  pg_admin_password = ENV['PG_ADMIN_PASSWORD']
+  pg_admin_port = ENV['PG_ADMIN_PORT']
+
   config.vm.box = "ubuntu/jammy64"
   config.vm.hostname = "inkoms"
-  config.vm.network "forwarded_port", guest: 9140, host: 9140
-  config.vm.network "forwarded_port", guest: 9141, host: 9141
+  config.vm.network "forwarded_port", guest: db_port, host: db_port
+  config.vm.network "forwarded_port", guest: pg_admin_port, host: pg_admin_port
 
   config.vm.provider "virtualbox" do |vb|
-    vb.cpus = 2
+    vb.cpus = "1"
     vb.memory = "1024"
   end
 
@@ -22,9 +40,17 @@ Vagrant.configure("2") do |config|
       sudo apt-get install -y docker-ce docker-ce-cli containerd.io
       sudo groupadd docker || true
       sudo usermod -aG docker vagrant
-      docker run hello-world || true
       git clone https://github.com/inkoms/inkoms-postgresql.git || true
       cd inkoms-postgresql || true
+
+      echo "DB_USER=#{db_user}" > .env
+      echo "DB_PASSWORD=#{db_password}" >> .env
+      echo "DB_NAME=#{db_name}" >> .env
+      echo "DB_PORT=#{db_port}" >> .env
+      echo "TZ=#{tz}" >> .env
+      echo "PG_ADMIN_EMAIL=#{pg_admin_email}" >> .env
+      echo "PG_ADMIN_PASSWORD=#{pg_admin_password}" >> .env
+      echo "PG_ADMIN_PORT=#{pg_admin_port}" >> .env
       docker compose -p inkoms-posgesql up -d || true
     SHELL
   end

@@ -1,2 +1,2 @@
 # inkoms-vagrant-local
- Aprovision script to Backend's environment
+ Vagrant's  Inkoms local backend environments Provisioning script
